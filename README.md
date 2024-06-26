@@ -30,6 +30,6 @@ npm start
 
 The Postman API documentation is available at the following link:
 
-[API Documentation](https://documenter.getpostman.com/view/12452968/2sA3dskDd6)
+[API Documentation](https://documenter.getpostman.com/view/12452968/2sA3dskYsm)
 
 Alternatively, view the swagger docs at `/docs` after starting the application.
