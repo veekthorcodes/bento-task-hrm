@@ -24,7 +24,7 @@ export class TaskController {
   })
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  async createTask(@Body() createTaskDto: CreateTaskDto) {
+  async create(@Body() createTaskDto: CreateTaskDto) {
     try {
       return this.taskService.create(createTaskDto);
     } catch (error) {
@@ -59,7 +59,11 @@ export class TaskController {
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.taskService.update(id, updateTaskDto);
+    try {
+      return this.taskService.update(id, updateTaskDto);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @ApiResponse({

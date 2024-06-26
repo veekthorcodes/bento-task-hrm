@@ -2,9 +2,8 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TaskModule } from './task/task.module';
-import { HttpExceptionFilter } from './http-exception.filter';
 import { EmployeeModule } from './employee/employee.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
