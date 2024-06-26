@@ -5,12 +5,14 @@ import { AppService } from './app.service';
 import { EmployeeModule } from './employee/employee.module';
 import { PaymentModule } from './payment/payment.module';
 import { TaskModule } from './task/task.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://testuser:testpassword@main.87lc93s.mongodb.net/bento_test_db?retryWrites=true&w=majority&appName=main',
-    ),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URI),
     TaskModule,
     EmployeeModule,
     PaymentModule,
