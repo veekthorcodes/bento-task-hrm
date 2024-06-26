@@ -1,4 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dtos';
@@ -15,45 +20,41 @@ export class EmployeeService {
     createEmployeeDto: CreateEmployeeDto,
   ): Promise<EmployeeDocument> {
     try {
-      return this.employeeModel.create(createEmployeeDto);
+      const employee = new this.employeeModel(createEmployeeDto);
+      return await employee.save();
     } catch (error) {
-      console.log('codes error');
-      return;
       if (error.code === 11000) {
-        throw new HttpException('Email already exists', 400);
+        throw new ConflictException('Email already in use');
       }
-      throw new HttpException('Something went wrong [service]', 500);
+      throw new BadRequestException('Failed to create employee', error.message);
     }
   }
 
   async findAll(): Promise<EmployeeDocument[]> {
-    return this.employeeModel.find();
+    return this.employeeModel.find().exec();
   }
 
   async findOne(id: string): Promise<EmployeeDocument> {
-    return this.employeeModel.findById(id);
+    const employee = await this.employeeModel.findById(id).exec();
+    if (!employee) {
+      throw new NotFoundException('Employee not found');
+    }
+    return employee;
   }
 
   async update(
     id: string,
     updateEmployeeDto: UpdateEmployeeDto,
   ): Promise<EmployeeDocument> {
-    const employee = this.findOne(id);
-    if (!employee) {
-      throw new NotFoundException('Employee not found');
-    }
-
-    return this.employeeModel.findByIdAndUpdate(id, updateEmployeeDto, {
-      new: true,
-    });
+    const employee = await this.findOne(id);
+    if (employee)
+      return this.employeeModel
+        .findByIdAndUpdate(id, updateEmployeeDto, { new: true })
+        .exec();
   }
 
   async delete(id: string): Promise<EmployeeDocument> {
-    const employee = this.findOne(id);
-    if (!employee) {
-      throw new NotFoundException('Employee not found');
-    }
-
-    return this.employeeModel.findByIdAndDelete(id);
+    const employee = await this.findOne(id);
+    if (employee) return this.employeeModel.findByIdAndDelete(id).exec();
   }
 }

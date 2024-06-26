@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EmployeeSchema } from './schema';
 import { EmployeeController } from './employee.controller';
+import { EmployeeService } from './employee.service';
+import { EmployeeSchema } from './schema';
 
 @Module({
   imports: [

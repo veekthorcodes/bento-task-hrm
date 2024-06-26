@@ -1,10 +1,9 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Payment, PaymentDocument } from './schema';
 import { Model } from 'mongoose';
-import { CreatePaymentDto, UpdatePaymentDto } from './dtos';
 import { EmployeeService } from 'src/employee/employee.service';
-import { PaymentStatus } from './enums';
+import { CreatePaymentDto } from './dtos';
+import { Payment, PaymentDocument } from './schema';
 
 @Injectable()
 export class PaymentService {

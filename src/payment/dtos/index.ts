@@ -1,4 +1,4 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { PartialType } from '@nestjs/swagger';
 import {
   IsDateString,
   IsEnum,
@@ -10,35 +10,18 @@ import {
 import { PaymentStatus } from '../enums';
 
 export class CreatePaymentDto {
-  @ApiProperty({
-    description: 'Employee ID',
-    required: true,
-  })
   @IsNotEmpty()
   @IsString()
   employeeId: string;
 
-  @ApiProperty({
-    description: 'Amount',
-    required: true,
-  })
   @IsNotEmpty()
   @IsNumber()
   amount: number;
 
-  @ApiProperty({
-    description: 'Date',
-    required: true,
-  })
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
   date: Date;
 
-  @ApiProperty({
-    description: 'Status',
-    required: false,
-    default: PaymentStatus.PENDING,
-  })
   @IsOptional()
   @IsEnum(PaymentStatus)
   status: string;
