@@ -50,19 +50,6 @@ export class PaymentController {
     return await this.paymentService.findAll(employeeId);
   }
 
-  // Retrieve a payment by ID
-  @ApiOperation({ summary: 'Retrieve a payment by ID' })
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: 'Payment retrieved sucessfully',
-  })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
-  @HttpCode(HttpStatus.OK)
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<PaymentDocument> {
-    return await this.paymentService.findOne(id);
-  }
-
   // Update a payment by ID
   @ApiOperation({ summary: 'Update a payment by ID' })
   @ApiResponse({
@@ -74,9 +61,10 @@ export class PaymentController {
   @Patch(':id')
   async updatePaymentStatus(
     @Param('id') id: string,
+    @Query('employeeId') employeeId: string,
     @Body() { status }: UpdatePaymentDto,
   ): Promise<PaymentDocument> {
-    return await this.paymentService.update(id, status);
+    return await this.paymentService.update(employeeId, id, status);
   }
 
   // Delete a payment by ID
@@ -88,7 +76,10 @@ export class PaymentController {
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad request' })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  async delete(@Param('id') id: string): Promise<PaymentDocument> {
-    return await this.paymentService.delete(id);
+  async delete(
+    @Param('id') id: string,
+    @Query('employeeId') employeeId: string,
+  ): Promise<PaymentDocument> {
+    return await this.paymentService.delete(employeeId, id);
   }
 }

@@ -19,6 +19,9 @@ export class Payment {
 
   @Prop({ enum: PaymentStatus, default: 'PENDING' })
   status: string;
+
+  @Prop({ default: false, select: false })
+  isDeleted: boolean;
 }
 
 export type PaymentDocument = Payment & Document;

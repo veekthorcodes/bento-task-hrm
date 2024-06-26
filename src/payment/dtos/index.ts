@@ -30,7 +30,7 @@ export class CreatePaymentDto {
 
   @ApiProperty({
     description: 'The date of the payment',
-    example: '2021-06-01',
+    example: '2024-06-26T21:30:38.294Z',
     required: true,
   })
   @IsOptional()

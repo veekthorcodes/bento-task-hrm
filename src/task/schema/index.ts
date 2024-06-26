@@ -12,6 +12,9 @@ export class Task {
 
   @Prop({ enum: TaskStatus, default: 'OPEN' })
   status: string;
+
+  @Prop({ default: false, select: false })
+  isDeleted: boolean;
 }
 
 export type TaskDocument = Task & Document;

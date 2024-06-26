@@ -6,6 +6,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  // Index
   @ApiOperation({ summary: 'Index' })
   @ApiResponse({ status: 200, description: 'Index' })
   @Get()

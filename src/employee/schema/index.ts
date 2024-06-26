@@ -29,6 +29,9 @@ export class Employee {
 
   @Prop({ required: true })
   salary: number;
+
+  @Prop({ default: false, select: false })
+  isDeleted: boolean;
 }
 
 export type EmployeeDocument = Employee & Document;

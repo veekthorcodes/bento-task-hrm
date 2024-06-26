@@ -1,11 +1,10 @@
 import {
-  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { CreateEmployeeDto, UpdateEmployeeDto } from './dtos';
 import { Employee, EmployeeDocument } from './schema';
 
@@ -16,45 +15,78 @@ export class EmployeeService {
     private readonly employeeModel: Model<EmployeeDocument>,
   ) {}
 
+  // Create an employee record
   async create(
     createEmployeeDto: CreateEmployeeDto,
   ): Promise<EmployeeDocument> {
-    try {
-      const employee = new this.employeeModel(createEmployeeDto);
-      return await employee.save();
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new ConflictException('Email already in use');
-      }
-      throw new BadRequestException('Failed to create employee', error.message);
+    const { email } = createEmployeeDto;
+    const employeeExists = await this.employeeModel.findOne({
+      email: { $eq: email },
+      isDeleted: { $ne: true },
+    });
+    if (employeeExists) {
+      throw new ConflictException('Employee already exists');
     }
+    return this.employeeModel.create(createEmployeeDto);
   }
 
+  // Find all employees by query
+  async findByQuery(
+    query: FilterQuery<EmployeeDocument>,
+  ): Promise<EmployeeDocument[]> {
+    return this.employeeModel.findOne({
+      ...query,
+      isDeleted: { $ne: true },
+    });
+  }
+
+  // Retrieve all employee records
   async findAll(): Promise<EmployeeDocument[]> {
-    return this.employeeModel.find().exec();
+    return this.employeeModel.find({
+      isDeleted: { $ne: true },
+    });
   }
 
+  // Retrieve an employee record by ID
   async findOne(id: string): Promise<EmployeeDocument> {
-    const employee = await this.employeeModel.findById(id).exec();
+    const employee = await this.employeeModel.findById({
+      _id: id,
+      isDeleted: { $ne: true },
+    });
     if (!employee) {
       throw new NotFoundException('Employee not found');
     }
     return employee;
   }
 
+  // Update an employee record by ID
   async update(
     id: string,
     updateEmployeeDto: UpdateEmployeeDto,
   ): Promise<EmployeeDocument> {
-    const employee = await this.findOne(id);
-    if (employee)
-      return this.employeeModel
-        .findByIdAndUpdate(id, updateEmployeeDto, { new: true })
-        .exec();
+    const employee = await this.employeeModel.findById({
+      _id: id,
+      isDeleted: { $ne: true },
+    });
+    if (!employee) {
+      throw new NotFoundException('Employee not found');
+    }
+    return this.employeeModel.findByIdAndUpdate(id, updateEmployeeDto, {
+      new: true,
+    });
   }
 
+  // Delete an employee record by ID
   async delete(id: string): Promise<EmployeeDocument> {
-    const employee = await this.findOne(id);
-    if (employee) return this.employeeModel.findByIdAndDelete(id).exec();
+    const employee = await this.employeeModel.findById({
+      _id: id,
+      isDeleted: { $ne: true },
+    });
+    if (!employee) {
+      throw new NotFoundException('Employee not found');
+    }
+    employee.isDeleted = true;
+    employee.email = `${employee.email}-deleted-${Date.now()}`;
+    return employee.save();
   }
 }
